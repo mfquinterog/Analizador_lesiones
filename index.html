@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<title>Analizador de lesiones en la piel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Online image analyzer of the three most likely diagnoses for a skin lesion.">
+
+
+<!--Código para evitar que el navegador almacene en caché la página-->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+  <title>Instituto de Neurociencias</title>
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+
+<!--Hojas de estilo CSS-->
+<link rel="stylesheet" href="css/w3.css">
+<link rel="stylesheet" href="css/bee.css">
+
+<!--Link a los iconos de Font Awesome-->
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.4.2/css/all.css' integrity='sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns' crossorigin='anonymous'>
+
+<!--Enlace a fuentes de google fonts-->
+<link href="https://fonts.googleapis.com/css?family=Oswald:300" rel="stylesheet">
+<link rel="shortcut icon" type="image/png" href="logoinub2.jpg">
+
+
+<style>
+html,body,h2,h3,h4 {font-family: Helvetica, sans-serif}
+</style>
+
+
+</head>
+<body class="front not-logged-in page-node no-sidebars i18n-en front not-logged-in cuerpo_con_promo cuerpo_con_menu page-node-1">
+
+	<div class="grid">
+		<header class="page-header">
+		  <div class="content">
+			<h1 class="space-letters w3-text-white"><b>Taller 1 : Architecting with Google Compute Engine</b></h1>
+			<h5 class="space-letters w3-text-white"><b>Integrantes: Ruben Rondon, Maria Fernanda Gaona, Maria Alejandra Marin</b></h5>
+		  </div>
+		</header>
+		<aside class="page-leftbar">
+			<div class="box">
+				<h1 class="space-letters w3-text-red"><b>Analizador de Lesiones en la Piel</b></h1>
+				<h3 class="space-letters w3-text-grey"><b>Analizador de imágenes en línea de los tres diagnósticos más probables para una lesión en la piel</b></h3>
+				<div style="display: flex; justify-content: center;">
+					<img id="selected-image" class="w3-round adjust-image" src="assets/samplepic.jpg" alt="" style="width: 50%; max-width: 500px;">
+				</div>
+			</div>
+			<div class="box1">
+				<div class='w3-padding'>
+					<h5 class="space-letters tag-font w3-text-red"><b>Caracteristicas Técnicas del Modelo:</b></h5>
+					<h6 class="space-letters tag-font w3-text-grey"><b>- Exactitud: 0.88 </b></h5>
+					<h6 class="space-letters tag-font w3-text-grey"><b>- Presición: 0.88 </b></h5>
+					<h6 class="space-letters tag-font w3-text-grey"><b>- Sencibilidad: 0.88 </b></h5>
+					<h7 class="space-letters tag-font w3-text-grey"><b>El entrenamiento del modelo está basado en el conjunto de 10015 imágenes dermatoscópicas de Harvard, entrenado con Tensorflow</b></h6>
+				</div>
+			</div>
+		</aside>				
+		<main class="page-main">
+			<!-- Barra de navegación -->
+			<div class="nav-bar">
+					<button id="btnn" class="w3-btn w3-red w3-round w3-margin-bottom adjust-spacing w3-hover-green btn-font w3-padding w3-space-letters w3-card-4" onclick="setTimeout(simulateClick.bind(null, 'image-selector'), 200)"><i class='fas fa-camera w3-padding-right' style='font-size:15px'></i><b>Enviar una imagen de una lesión en la piel</b></button>
+					<input id="image-selector" type="file" style="display: none;">
+					<!-- Botón estilizado -->
+					<button class="custom-file-button" style='font-size:15px'onclick="document.getElementById('image-selector').click();">
+						<i class="fas fa-upload"></i> 
+					</button>
+					<button id="predict-button" class="w3-btn w3-red w3-round w3-margin-bottom adjust-spacing w3-hover-green btn-font w3-padding w3-space-letters w3-card-4">
+						<i class='fas fa-magic w3-padding-right' style='font-size:15px'></i><b>Predict</b>
+					</button>
+			</div>
+
+			<!-- Sección extra (opcional) -->
+			<div class="extra-section">
+				<h5>Información adicional</h5>
+				<div class="w3-center">
+					<div class="progress-bar">Modelo con Inteligencia Artificial cargando...</div>
+				</div>
+			</div>
+						
+			<!-- Área de resultados -->
+			<div class="results-area">
+				<h3>Resultados del análisis</h3>
+				<ol class='w3-left-align' id='prediction-list'></ol>
+			</div>
+		
+
+		</main>
+		<footer class="page-footer">
+			<p class="space-letters tag-font w3-text-grey"><b>Maestría en Estadística Aplicada a Ciencia de Datos</b></p>
+			<p class="space-letters tag-font w3-text-grey"><b>Universidad del Bosque</b></p>
+			
+		</footer>
+	</div>
+
+	<!--===================================-->
+	
+	
+		<!-- cargando jQuery -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	
+		</script>
+		<!-- cargando TensorFlow.js -->
+		
+		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.6.0/dist/tf.min.js"></script>
+		"></script>
+		</script>
+		
+		<!-- NOTA:
+		Cambie el nombre del archivo predict.js (cambie el número) cada vez que modifique el archivo predict.js.
+		Esto forzará al navegador a cargar el predict.js más reciente y no cargar
+		el archivo predict.js que está en la caché del usuario.
+		Hay una solución en stackoverflow que dice que hay que añadir una versión al archivo js. 
+		Pero podría ser que algunos navegadores puedan ignorar la versión. Por lo tanto creo que
+		es más seguro cambiar el nombre del archivo js.-->
+		<script src="jscript/target_classes.js"></script>
+		<script src="jscript/predict100.js"></script> 
+		
+		
+		
+	</div> <!-- w3-content -->
+	</div>
+</body>
+</html>
+
